@@ -2,7 +2,7 @@
 
 This repository contains simulation and analysis code for a research project investigating whether **deep transcranial magnetic stimulation (TMS)** coils can effectively target **deep brain structures**, and where on the scalp such coils should be placed to maximize stimulation of those targets.
 
-The project combines large-scale **biophysical simulations**, **coordinate transformations**, and **unsupervised learning methods** to identify consistent optimal coil placement locations across subjects.
+The project combines large-scale **biophysical simulations**, **coordinate transformations**, and **unsupervised learning methods** to identify consistent optimal coil placement locations **across a large population of subjects**.
 
 ---
 
@@ -27,6 +27,29 @@ The goals of this project are to:
 
 ---
 
+## Scale of the Study
+
+All simulations were performed at population scale using subject-specific head models derived from MRI data:
+
+- **250 subjects**
+- **250 T1-weighted MRI scans**
+- **250 T2-weighted MRI scans**
+- **250 subject-specific finite-element head meshes**
+- **8 deep brain target structures**
+
+For each target structure:
+
+- **250 independent SimNIBS optimization runs** were performed (one per subject)
+- Each optimization evaluates many candidate scalp locations and outputs **one optimal coil placement per subject**
+
+In total, the project produces:
+
+- **2,000 subject-specific optimal coil coordinates**
+- **250 optimal coordinates per brain structure**
+- A population-level distribution of optimal coil placements for each target
+
+---
+
 ## Target Brain Structures
 
 Simulations were performed for the following structures, which are commonly targeted in DBS:
@@ -40,7 +63,7 @@ Simulations were performed for the following structures, which are commonly targ
 - Subthalamic Nucleus
 - Ventromedial Thalamic Nucleus
 
-Each structure is handled by a dedicated optimization script.
+Each structure is handled by a dedicated optimization script and yields **250 optimal coil placements** across subjects.
 
 ---
 
@@ -60,23 +83,23 @@ The following scripts run SimNIBS optimization routines to find the optimal scal
 - `find_optimal_coords_for_VentromedialNucleus.py`
 
 Each script:
-- Takes subject-specific head meshes as input
+- Takes **subject-specific head meshes (250 subjects)** as input
 - Converts target coordinates from MNI space to subject space
 - Iteratively simulates coil placements across the scalp
-- Outputs the optimal coil placement for each subject
+- Outputs the **optimal coil placement for each subject**
 
 ---
 
 ### Coordinate Transformation Utilities
 
 - `interpret_affine_coordinates.py`  
-  Converts coordinates between subject MRI space and MNI space using affine transformations. This enables aggregation and comparison of results across subjects.
+  Converts coordinates between subject MRI space and MNI space using affine transformations. This enables aggregation and comparison of optimal coil placements across subjects.
 
 ---
 
 ### Analysis and Visualization Scripts
 
-These scripts analyze and visualize the optimal coil coordinates obtained from the simulations:
+These scripts analyze and visualize the **250 optimal coil coordinates per structure** obtained from the simulations:
 
 - `kmeans_clustering.py`  
   Applies K-means clustering to identify representative optimal coil locations.
@@ -87,11 +110,13 @@ These scripts analyze and visualize the optimal coil coordinates obtained from t
 - `TSNE_visualization.py`  
   Uses t-SNE dimensionality reduction to visualize spatial trends and cluster structure in two dimensions.
 
+Across brain structures, clustering typically reveals **2–3 stable clusters per structure**, corresponding to distinct optimal scalp placement regions.
+
 ---
 
 ### Secondary Finite-Element Validation
 
-These scripts re-run finite-element simulations using cluster-derived optimal coordinates to quantify electric field intensity at the target structures:
+These scripts re-run finite-element simulations using **cluster-derived optimal coordinates** to quantify electric field intensity at the target structures:
 
 - `FEA_simulations_with_optimal_coords1.py`
 - `FEA_simulations_with_optimal_coords2.py`
@@ -127,15 +152,6 @@ These simulations serve as a validation step for the clustering results.
 
 Large data files are managed using **Git LFS**.
 
----
-
-## Disclaimer
-
-This repository contains **computational simulations only**.  
-It is intended for **research and educational purposes** and does **not constitute medical advice**.  
-No clinical claims are made regarding treatment efficacy.
-
----
 
 ## Summary
 
